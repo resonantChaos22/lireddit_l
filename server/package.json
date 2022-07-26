@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "clean": "rm -r dist",
     "watch": "tsc -w",
     "start": "node dist/index.js",
     "dev": "nodemon dist/index.js",
@@ -13,6 +14,7 @@
   "author": "Shreyash",
   "license": "ISC",
   "devDependencies": {
+    "@types/express": "^4.17.13",
     "@types/node": "^18.6.0",
     "nodemon": "^2.0.19",
     "ts-node": "^10.9.1",
@@ -23,8 +25,13 @@
     "@mikro-orm/core": "^5.2.3",
     "@mikro-orm/migrations": "^5.2.3",
     "@mikro-orm/postgresql": "^5.2.3",
+    "apollo-server-express": "^3.10.0",
     "dotenv": "^16.0.1",
-    "pg": "^8.7.3"
+    "express": "^4.18.1",
+    "graphql": "15.7.2",
+    "pg": "^8.7.3",
+    "reflect-metadata": "^0.1.13",
+    "type-graphql": "^1.1.1"
   },
   "mikro-orm": {
     "useTsNode": true,
