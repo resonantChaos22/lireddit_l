@@ -115,7 +115,7 @@ export type RegisterMutation = { __typename?: 'Mutation', register: { __typename
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type MeQuery = { __typename?: 'Query', me?: { __typename?: 'User', id: number, username: string, createdAt: string, updatedAt: string } | null };
+export type MeQuery = { __typename?: 'Query', me?: { __typename?: 'User', id: number, username: string } | null };
 
 
 export const LoginDocument = gql`
@@ -161,8 +161,6 @@ export const MeDocument = gql`
   me {
     id
     username
-    createdAt
-    updatedAt
   }
 }
     `;
