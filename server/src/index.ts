@@ -5,6 +5,7 @@ import * as redis from "redis";
 import session from "express-session";
 import connectRedis from "connect-redis";
 import dotenv from "dotenv";
+import cors from "cors";
 import mikroOrmConfig from "./mikro-orm.config";
 import { ApolloServer } from "apollo-server-express";
 import { buildSchema } from "type-graphql";
@@ -28,9 +29,10 @@ const main = async () => {
   const app = express();
 
   const corsOptions = {
-    origin: ["http://localhost:4000/"],
+    origin: "http://localhost:3000",
     credentials: true,
   };
+  app.use(cors(corsOptions));
 
   const RedisStore = connectRedis(session);
   const redisClient = redis.createClient({ legacyMode: true });
@@ -44,7 +46,7 @@ const main = async () => {
         disableTouch: true,
       }),
       cookie: {
-        maxAge: 1000 * 60 * 60 * 24 * 365 * 10, // 10 years
+        maxAge: 1000 * 60 * 60 * 24 * 365, // 10 years
         httpOnly: true,
         sameSite: "lax", //  csrf
         secure: __prod__,
@@ -69,7 +71,7 @@ const main = async () => {
   });
 
   await apolloServer.start();
-  apolloServer.applyMiddleware({ app, cors: corsOptions });
+  apolloServer.applyMiddleware({ app, cors: false });
 
   //! debug purpose
   // app.get("/", (req, res) => {

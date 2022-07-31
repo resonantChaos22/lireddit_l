@@ -44,7 +44,7 @@ export class UserResolver {
   @Query(() => User, { nullable: true })
   async me(@Ctx() { em, req }: MyContext) {
     if (!req.session.userId) {
-      console.log("yo");
+      console.log("No user ID found");
       return null;
     }
 
@@ -62,7 +62,7 @@ export class UserResolver {
         errors: [
           {
             field: "username",
-            message: "length must be greater than 2",
+            message: "Length must be greater than 2",
           },
         ],
       };
@@ -72,7 +72,7 @@ export class UserResolver {
         errors: [
           {
             field: "password",
-            message: "length must be greater than 3",
+            message: "Length must be greater than 3",
           },
         ],
       };
