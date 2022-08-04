@@ -1,5 +1,5 @@
 import { User } from "../entities/User";
-import { MyContext } from "src/types";
+import { MyContext } from "../types";
 import {
   Resolver,
   Mutation,
@@ -11,6 +11,7 @@ import {
   Query,
 } from "type-graphql";
 import argon2 from "argon2";
+import { COOKIE_NAME } from "../constants";
 
 @InputType()
 class UsernamePasswordInput {
@@ -135,5 +136,21 @@ export class UserResolver {
     req.session.userId = user.id;
 
     return { user };
+  }
+
+  @Mutation(() => Boolean)
+  logout(@Ctx() { req, res }: MyContext) {
+    return new Promise((_res) =>
+      req.session.destroy((err) => {
+        if (err) {
+          console.log(err);
+          _res(false);
+          return;
+        }
+
+        res.clearCookie(COOKIE_NAME); //  clears cookie on browser
+        _res(true);
+      })
+    );
   }
 }
