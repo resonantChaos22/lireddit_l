@@ -39,7 +39,7 @@ export class UserResolver {
   @Query(() => User, { nullable: true })
   async me(@Ctx() { em, req }: MyContext) {
     if (!req.session.userId) {
-      console.log("No user ID found");
+      //console.log("No user ID found");
       return null;
     }
 
@@ -148,6 +148,58 @@ export class UserResolver {
     <a href="http://localhost:3000/change-password/${token}">Reset Password</a>`
     );
     return true;
+  }
+
+  @Mutation(() => UserResponse)
+  async changePassword(
+    @Arg("token") token: string,
+    @Arg("newPassword") newPassword: string,
+    @Ctx() { em, redis, req }: MyContext
+  ): Promise<UserResponse> {
+    if (newPassword.length <= 2) {
+      return {
+        errors: [
+          {
+            field: "newPassword",
+            message: "Length must be greater than 2",
+          },
+        ],
+      };
+    }
+
+    const key = FORGOT_PASSWORD_PREFIX + token;
+    const userId = await redis.get(key);
+    if (!userId) {
+      return {
+        errors: [
+          {
+            field: "token",
+            message: "Token Invalid/Expired",
+          },
+        ],
+      };
+    }
+    const user = await em.findOne(User, { id: parseInt(userId) });
+    if (!user) {
+      return {
+        errors: [
+          {
+            field: "token",
+            message: "User no longer exists",
+          },
+        ],
+      };
+    }
+
+    const newHashedPassword = await argon2.hash(newPassword);
+    user.password = newHashedPassword;
+    await em.persistAndFlush(user);
+
+    //  login after change password
+    req.session.userId = user.id;
+    await redis.del(key);
+
+    return { user };
   }
 
   @Mutation(() => Boolean)
